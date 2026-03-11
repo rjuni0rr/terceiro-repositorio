@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\Category;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class TaskController extends Controller
 {
@@ -58,37 +58,39 @@ class TaskController extends Controller
     }
 
 
-    public function editTask(Task $task)
+    public function editTask($id)
     {
-//        if ($task->user_id !== auth()->id()) {
-//            abort(403);
-//        }
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
 
-        $categories = Category::where('is_system', true)
-            ->orWhere('user_id', auth()->id())
-            ->orderBy('name')
-            ->get();
+        $task = Task::where('id',$id)->where('user_id',auth()->id())->firstOrFail();
+        $categories = Category::where('is_system', true)->orWhere('user_id', auth()->id())->orderBy('name')->get();
 
         return view('main.task_edit_frm', compact('task','categories'));
     }
 
 
-    public function editTaskSubmit(Request $request, Task $task)
+    public function editTaskSubmit(Request $request, $id)
     {
-        if ($task->user_id !== auth()->id()) {
-            abort(403);
+        // desencripta o id
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            abort(403, 'ID de fila inválido');
         }
 
-        $request->validate(
-            [
-                'name' => 'required|max:255',
-                'category_id' => 'nullable|exists:categories,id',
-                'urgency' => 'required|in:low,medium,high'
-            ],
-            [
+        $task = Task::where('id',$id)
+            ->where('user_id',auth()->id())
+            ->firstOrFail();
 
-            ]
-        );
+        $request->validate([
+            'name' => 'required|max:255',
+            'category_id' => 'nullable|exists:categories,id',
+            'urgency' => 'required|in:low,medium,high'
+        ]);
 
         $task->update([
             'name' => $request->name,
@@ -99,7 +101,44 @@ class TaskController extends Controller
 
         return redirect()
             ->route('tasks.index')
-            ->with('success','Task atualizada com sucesso');
+            ->with('success','Task atualizada');
+
+    }
+
+
+    public function deleteTask($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+
+        $task = Task::where('id',$id)
+            ->where('user_id',auth()->id())
+            ->firstOrFail();
+
+        return view('main.task_delete', compact('task'));
+    }
+
+
+    public function deleteTaskConfirm($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+
+        $task = Task::where('id',$id)
+            ->where('user_id',auth()->id())
+            ->firstOrFail();
+
+        $task->delete();
+
+        return redirect()
+            ->route('tasks.index')
+            ->with('success','Task excluída com sucesso');
     }
 
 

@@ -9,7 +9,7 @@
         </div>
 
         @if($errors->any())
-            <div class="alert alert-danger">
+            <div class="alert alert-danger alert-dismissible fade show">
                 <strong>Houve um erro ao criar a task: </strong>
 
                 <ul class="mb-0">
@@ -57,7 +57,7 @@
 
                         </select>
 
-                        <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#newCategory">Nova</button>
+                        <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#newCategory"><i class="far fa-plus me-2"></i>Criar categoria</button>
                     </div>
 
                     {{-- urgencia --}}
@@ -90,9 +90,9 @@
 
                     {{-- botões --}}
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left me-2"></i>Cancelar</a>
 
-                        <button class="btn btn-success">Salvar Task</button>
+                        <button class="btn btn-success"><i class="fa-solid fa-check me-2"></i>Salvar Task</button>
                     </div>
                 </form>
             </div>

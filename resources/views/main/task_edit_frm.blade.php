@@ -7,12 +7,12 @@
             </div>
 
             <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary">
-                Voltar
+                <i class="fa-solid fa-arrow-left me-2"></i>Voltar
             </a>
         </div>
 
         @if($errors->any())
-            <div class="alert alert-danger">
+            <div class="alert alert-danger alert-dismissible fade show">
                 <ul class="mb-0">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -24,24 +24,25 @@
         <div class="card shadow-sm border-0">
             <div class="card-body">
 
-                <form method="POST" action="{{ route('tasks.edit.submit',$task->id) }}">
+                <form method="POST" action="{{ route('tasks.edit.submit', Crypt::encrypt($task->id)) }}">
                     @csrf
                     @method('PUT')
 
+                    {{-- nome --}}
                     <div class="mb-3">
                         <label class="form-label">Nome da Task</label>
 
-                        <input type="text" name="name" class="form-control" value="{{ old('name',$task->name) }}" required>
+                        <input type="text" name="name" class="form-control" value="{{ old('name',$task->name) }}">
                     </div>
 
-
+                    {{-- descrição --}}
                     <div class="mb-3">
                         <label class="form-label">Descrição</label>
 
                         <textarea name="description" rows="4" class="form-control">{{ old('description',$task->description) }}</textarea>
                     </div>
 
-
+                    {{-- categoria --}}
                     <div class="mb-3">
                         <label class="form-label">Categoria</label>
 
@@ -56,11 +57,11 @@
                                 @endforeach
                             </select>
 
-                            <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#newCategory">Nova</button>
+                            <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#newCategory"><i class="far fa-plus me-2"></i>Criar categoria</button>
                         </div>
                     </div>
 
-
+                    {{-- urgencia --}}
                     <div class="mb-4">
                         <label class="form-label d-block">Urgência</label>
 
@@ -83,10 +84,10 @@
                         </div>
                     </div>
 
-
+                    {{-- botões --}}
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('tasks.index') }}" class="btn btn-secondary">Cancelar</a>
-                        <button class="btn btn-primary">Atualizar Task</button>
+                        <a href="{{ route('tasks.index') }}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left me-2"></i>Cancelar</a>
+                        <button class="btn btn-primary"><i class="fa-solid fa-check me-2"></i>Atualizar Task</button>
                     </div>
                 </form>
             </div>

@@ -8,7 +8,7 @@
             </div>
 
             <a href="{{ route('tasks.create') }}" class="btn btn-primary">
-                + Nova Task
+                <i class="far fa-plus me-2"></i>Nova Task
             </a>
         </div>
 
@@ -105,18 +105,13 @@
                             <td>{{ $task->created_at->format('d/m/Y') }}</td>
 
                             <td>
-                                <a href="{{ route('tasks.edit',$task->id) }}" class="btn btn-sm btn-outline-warning">
-                                    Editar
+                                <a href="{{ route('tasks.edit', Crypt::encrypt($task->id)) }}" class="btn btn-sm btn-outline-warning" title="Editar">
+                                    <i class="fa-regular fa-pen-to-square"></i>
                                 </a>
 
-{{--                                <form action="{{ route('tasks.destroy',$task->id) }}" method="POST" class="d-inline">--}}
-{{--                                    @csrf--}}
-{{--                                    @method('DELETE')--}}
-
-{{--                                    <button class="btn btn-sm btn-outline-danger">--}}
-{{--                                        Excluir--}}
-{{--                                    </button>--}}
-{{--                                </form>--}}
+                                <a href="{{ route('tasks.delete', Crypt::encrypt($task->id)) }}" class="btn btn-sm btn-danger" title="Deletar">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </a>
                             </td>
                         </tr>
                     @endforeach

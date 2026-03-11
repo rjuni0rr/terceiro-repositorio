@@ -6,8 +6,6 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TaskController;
 
 
-
-
 Route::middleware('guest')->group(function(){
 
     // authentication (login)
@@ -22,33 +20,27 @@ Route::middleware('guest')->group(function(){
 
 Route::middleware('auth')->group(function(){
 
+    // index
     Route::get('/',[TaskController::class,'index'])->name('tasks.index');
 
     // create a new task
     Route::get('/tasks/create', [TaskController::class, 'createTask'])->name('tasks.create');
     Route::post('/tasks/create', [TaskController::class, 'createTaskSubmit'])->name('tasks.create.submit');
 
+
+
     // edit task
-    Route::get('/task/edit/{id}', [TaskController::class, 'editTask'])->name('tasks.edit');
-    Route::post('/task/edit', [TaskController::class, 'editTaskSubmit'])->name('tasks.edit.submit');
+    Route::get('/task/{id}/edit', [TaskController::class, 'editTask'])->name('tasks.edit');
+    Route::put('/task/{id}', [TaskController::class, 'editTaskSubmit'])->name('tasks.edit.submit');
 
-//    // delete a queue
-//    Route::get('/queue/delete/{id}', [MainController::class, 'deleteQueue'])->name('queue.delete');
-//    Route::get('/queue/delete-confirm/{id}', [MainController::class, 'deleteQueueConfirm'])->name('queue.delete.confirm');
+    // delete a queue
+    Route::get('/task/{id}/delete', [TaskController::class, 'deleteTask'])->name('tasks.delete');
+    Route::delete('/task/{id}', [TaskController::class, 'deleteTaskConfirm'])->name('tasks.delete.confirm');
 
-//    Route::resource('tasks',TaskController::class);
-
-
-
+    // criar categoria
     Route::post('/categories', [CategoryController::class,'createCategorySubmit'])->name('create.category.submit');
 
-
-
-
-
-
-
-
+    // logout
     Route::post('/logout',[AuthController::class,'logout']);
 });
 
