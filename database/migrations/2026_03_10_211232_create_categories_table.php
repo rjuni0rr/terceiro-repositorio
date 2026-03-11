@@ -16,12 +16,16 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('user_id')
+                ->nullable()
                 ->constrained()
                 ->cascadeOnDelete();
 
             $table->string('name');
 
+            $table->boolean('is_system')->default(false);
+
             $table->timestamps();
+
         });
     }
 

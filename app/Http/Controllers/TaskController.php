@@ -20,87 +20,143 @@ class TaskController extends Controller
     }
 
 
-    public function create()
+    public function createTask()
     {
-        $categories = Category::where('user_id', Auth::id())
-            ->orderBy('name')
-            ->get();
+        $categories = Category::where('is_system', true)
+            ->orWhere('user_id', auth()->id())->orderBy('name')->get();
 
-        return view('tasks.create', compact('categories'));
+        return view('main.task_create_frm', compact('categories'));
     }
 
 
-    public function store(Request $request)
+    public function createTaskSubmit(Request $request)
     {
-        $validated = $request->validate([
-            'name' => ['required','string','max:255'],
-            'description' => ['nullable','string'],
-            'category_id' => ['required','exists:categories,id'],
-            'urgency' => ['required','in:low,medium,high']
-        ]);
+
+        $request->validate(
+            [
+                'name' => 'required|max:255',
+                'category_id' => 'nullable|exists:categories,id',
+                'urgency' => 'required|in:low,medium,high'
+            ],
+            [
+                'name.required' => 'O nome de usuário é obrigatório',
+                'name.max' => 'O nome de usuário deve ter no máximo 255 caracteres.',
+
+                'urgency.required' => 'O campo de urgência é obrigatório.'
+            ]
+        );
 
         Task::create([
-            'user_id' => Auth::id(),
-            'category_id' => $validated['category_id'],
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'urgency' => $validated['urgency']
+            'user_id' => auth()->id(),
+            'name' => $request->name,
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+            'urgency' => $request->urgency
         ]);
 
-        return redirect()
-            ->route('tasks.index')
-            ->with('success','Task criada com sucesso.');
+        return redirect()->route('tasks.index')->with('success','Task criada com sucesso');
     }
 
 
-    public function edit($id)
+    public function editTask(Task $task)
     {
-        $task = Task::where('user_id', Auth::id())
-            ->findOrFail($id);
+//        if ($task->user_id !== auth()->id()) {
+//            abort(403);
+//        }
 
-        $categories = Category::where('user_id', Auth::id())
+        $categories = Category::where('is_system', true)
+            ->orWhere('user_id', auth()->id())
             ->orderBy('name')
             ->get();
 
-        return view('tasks.edit', compact('task','categories'));
+        return view('main.task_edit_frm', compact('task','categories'));
     }
 
 
-    public function update(Request $request, $id)
+    public function editTaskSubmit(Request $request, Task $task)
     {
-        $validated = $request->validate([
-            'name' => ['required','string','max:255'],
-            'description' => ['nullable','string'],
-            'category_id' => ['required','exists:categories,id'],
-            'urgency' => ['required','in:low,medium,high']
-        ]);
+        if ($task->user_id !== auth()->id()) {
+            abort(403);
+        }
 
-        $task = Task::where('user_id', Auth::id())
-            ->findOrFail($id);
+        $request->validate(
+            [
+                'name' => 'required|max:255',
+                'category_id' => 'nullable|exists:categories,id',
+                'urgency' => 'required|in:low,medium,high'
+            ],
+            [
+
+            ]
+        );
 
         $task->update([
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'category_id' => $validated['category_id'],
-            'urgency' => $validated['urgency']
+            'name' => $request->name,
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+            'urgency' => $request->urgency
         ]);
 
         return redirect()
             ->route('tasks.index')
-            ->with('success','Task atualizada com sucesso.');
+            ->with('success','Task atualizada com sucesso');
     }
 
 
-    public function destroy($id)
-    {
-        $task = Task::where('user_id', Auth::id())
-            ->findOrFail($id);
 
-        $task->delete();
 
-        return redirect()
-            ->route('tasks.index')
-            ->with('success','Task removida.');
-    }
+
+
+//
+//
+//    public function edit($id)
+//    {
+//        $task = Task::where('user_id', Auth::id())
+//            ->findOrFail($id);
+//
+//        $categories = Category::where('user_id', Auth::id())
+//            ->orderBy('name')
+//            ->get();
+//
+//        return view('tasks.edit', compact('task','categories'));
+//    }
+//
+//
+//    public function update(Request $request, $id)
+//    {
+//        $validated = $request->validate([
+//            'name' => ['required','string','max:255'],
+//            'description' => ['nullable','string'],
+//            'category_id' => ['required','exists:categories,id'],
+//            'urgency' => ['required','in:low,medium,high']
+//        ]);
+//
+//        $task = Task::where('user_id', Auth::id())
+//            ->findOrFail($id);
+//
+//        $task->update([
+//            'name' => $validated['name'],
+//            'description' => $validated['description'],
+//            'category_id' => $validated['category_id'],
+//            'urgency' => $validated['urgency']
+//        ]);
+//
+//        return redirect()
+//            ->route('tasks.index')
+//            ->with('success','Task atualizada com sucesso.');
+//    }
+//
+//
+//    public function destroy($id)
+//    {
+//        $task = Task::where('user_id', Auth::id())
+//            ->findOrFail($id);
+//
+//        $task->delete();
+//
+//        return redirect()
+//            ->route('tasks.index')
+//            ->with('success','Task removida.');
+//    }
 
 }
