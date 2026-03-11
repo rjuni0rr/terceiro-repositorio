@@ -9,26 +9,19 @@ class CategorySeeder extends Seeder
 {
     public function run(): void
     {
+        $categories = [
+            'Trabalho',
+            'Estudos',
+            'Pessoal',
+            'Saúde',
+            'Finanças'
+        ];
 
-        Category::create([
-            'user_id' => 1,
-            'name' => 'Trabalho'
-        ]);
-
-        Category::create([
-            'user_id' => 1,
-            'name' => 'Estudos'
-        ]);
-
-        Category::create([
-            'user_id' => 1,
-            'name' => 'Projetos'
-        ]);
-
-        Category::create([
-            'user_id' => 2,
-            'name' => 'Pessoal'
-        ]);
-
+        foreach ($categories as $category) {
+            Category::create([
+                'name' => $category,
+                'is_system' => true
+            ]);
+        }
     }
 }

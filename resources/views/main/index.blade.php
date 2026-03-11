@@ -109,14 +109,14 @@
                                     Editar
                                 </a>
 
-                                <form action="{{ route('tasks.destroy',$task->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
+{{--                                <form action="{{ route('tasks.destroy',$task->id) }}" method="POST" class="d-inline">--}}
+{{--                                    @csrf--}}
+{{--                                    @method('DELETE')--}}
 
-                                    <button class="btn btn-sm btn-outline-danger">
-                                        Excluir
-                                    </button>
-                                </form>
+{{--                                    <button class="btn btn-sm btn-outline-danger">--}}
+{{--                                        Excluir--}}
+{{--                                    </button>--}}
+{{--                                </form>--}}
                             </td>
                         </tr>
                     @endforeach

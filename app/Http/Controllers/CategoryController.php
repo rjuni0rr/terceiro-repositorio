@@ -18,66 +18,29 @@ class CategoryController extends Controller
     }
 
 
-    public function create()
+    public function createCategorySubmit(Request $request)
     {
-        return view('categories.create');
-    }
-
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => ['required','string','max:100']
-        ]);
+        $request->validate(
+            [
+                'name' => 'required|max:255'
+            ],
+            [
+                'name.required' => 'O nome de usuário é obrigatório',
+                'name.max' => 'O nome de usuário deve ter no máximo 255 caracteres.',
+            ]
+        );
 
         Category::create([
-            'name' => $validated['name'],
-            'user_id' => Auth::id()
+
+            'name' => $request->name,
+            'user_id' => auth()->id(),
+            'is_system' => false
+
         ]);
 
-        return redirect()
-            ->route('categories.index')
-            ->with('success','Categoria criada com sucesso.');
+        return back()->with('success','Categoria criada');
+
     }
 
 
-    public function edit($id)
-    {
-        $category = Category::where('user_id', Auth::id())
-            ->findOrFail($id);
-
-        return view('categories.edit', compact('category'));
-    }
-
-
-    public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'name' => ['required','string','max:100']
-        ]);
-
-        $category = Category::where('user_id', Auth::id())
-            ->findOrFail($id);
-
-        $category->update([
-            'name' => $validated['name']
-        ]);
-
-        return redirect()
-            ->route('categories.index')
-            ->with('success','Categoria atualizada.');
-    }
-
-
-    public function destroy($id)
-    {
-        $category = Category::where('user_id', Auth::id())
-            ->findOrFail($id);
-
-        $category->delete();
-
-        return redirect()
-            ->route('categories.index')
-            ->with('success','Categoria removida.');
-    }
 }
